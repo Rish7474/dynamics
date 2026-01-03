@@ -106,7 +106,7 @@ function generateWallpaper({ width, height, data, goal = 10000 }) {
       ctx.fillStyle = COLORS.TODAY_TEXT;
       const dayNum = dayIndex + 1;
       const fontSize = dayNum >= 100 ? circleRadius * 1.7 : circleRadius * 1.9;
-      ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`;
+      ctx.font = `bold ${fontSize}px sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(dayNum.toString(), x, y);
@@ -129,7 +129,7 @@ function generateWallpaper({ width, height, data, goal = 10000 }) {
   // Draw stats at bottom center
   const statsY = height * 0.92;
   const statsFontSize = width * 0.028;
-  ctx.font = `${statsFontSize}px -apple-system, BlinkMacSystemFont, sans-serif`;
+  ctx.font = `${statsFontSize}px sans-serif`;
   ctx.textBaseline = 'middle';
   
   const daysText = `${daysLeft}d left`;
