@@ -4,28 +4,29 @@ const { generateWallpaper } = require('./imageGenerator');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Parse JSON request bodies
+app.use(express.json({ limit: '1mb' }));
+
 /**
  * Main wallpaper generation endpoint
  * 
- * Query Parameters:
+ * Request Body (JSON):
  * - width: Screen width in points (required)
  * - height: Screen height in points (required)
  * - data: Comma-separated step counts starting from Jan 1st (required)
  * - goal: Step goal threshold (optional, defaults to 10000)
  * - scale: Device pixel ratio (optional, defaults to 3 for Retina)
- * 
- * Example: /wallpaper?width=393&height=852&data=8500,12000,9500&goal=10000&scale=3
  */
-app.get('/wallpaper', (req, res) => {
+app.post('/wallpaper', (req, res) => {
   try {
-    const { width, height, data, goal, scale } = req.query;
+    const { width, height, data, goal, scale } = req.body;
     
     // Validate required parameters
     if (!width || !height || !data) {
       return res.status(400).json({
         error: 'Missing required parameters',
         required: ['width', 'height', 'data'],
-        example: '/wallpaper?width=393&height=852&data=8500,12000,9500&goal=10000&scale=3'
+        example: { width: 393, height: 852, data: '8500,12000,9500', goal: 10000, scale: 3 }
       });
     }
     
@@ -84,35 +85,31 @@ app.get('/wallpaper', (req, res) => {
   }
 });
 
-// Also serve on root path for convenience
+// API documentation on root
 app.get('/', (req, res) => {
-  // If query params are present, generate wallpaper
-  if (req.query.width && req.query.height && req.query.data) {
-    return app._router.handle(req, res, () => {});
-  }
-  
-  // Otherwise show usage info
   res.json({
     service: '10K Steps Wallpaper Generator',
-    version: '2.0.0',
-    description: 'Generates a spiral visualization of your yearly step count',
+    version: '2.1.0',
+    description: 'Generates a visualization of your yearly step count for iPhone lock screen',
     usage: {
       endpoint: '/wallpaper',
-      method: 'GET',
-      parameters: {
+      method: 'POST',
+      contentType: 'application/json',
+      body: {
         width: 'Screen width in points (required)',
         height: 'Screen height in points (required)',
         data: 'Comma-separated step counts starting from Jan 1st (required)',
         goal: 'Step goal threshold (optional, defaults to 10000)',
         scale: 'Device pixel ratio (optional, defaults to 3 for Retina displays)'
       },
-      example: '/wallpaper?width=393&height=852&data=8500,12000,9500&goal=10000&scale=3',
+      example: {
+        width: 393,
+        height: 852,
+        data: '8500,12000,9500',
+        goal: 10000,
+        scale: 3
+      },
       note: 'Width/height are multiplied by scale to get actual pixel dimensions'
-    },
-    visualization: {
-      layout: 'Spiral from center outward',
-      day1: 'Center of spiral',
-      day365: 'Outer edge of spiral'
     },
     legend: {
       white: 'Days where step goal was met',
