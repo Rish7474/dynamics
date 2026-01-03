@@ -1,4 +1,18 @@
-const { createCanvas } = require('@napi-rs/canvas');
+const { createCanvas, GlobalFonts } = require('@napi-rs/canvas');
+const path = require('path');
+
+// Try to load system fonts for serverless environments
+try {
+  // Register a basic font from the system or use fallback
+  const fontDir = '/usr/share/fonts';
+  const fs = require('fs');
+  if (fs.existsSync(fontDir)) {
+    GlobalFonts.loadFontsFromDir(fontDir);
+  }
+} catch (e) {
+  // Fonts may not be available, text rendering might fail
+  console.log('Font loading skipped:', e.message);
+}
 
 // Color constants
 const COLORS = {
