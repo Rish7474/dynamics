@@ -1,9 +1,38 @@
 const { createCanvas, GlobalFonts } = require('@napi-rs/canvas');
 const path = require('path');
+const fs = require('fs');
 
 // Register bundled Inter font for serverless environments
-const fontPath = path.join(__dirname, 'Inter-Regular.ttf');
-GlobalFonts.registerFromPath(fontPath, 'Inter');
+let fontRegistered = false;
+try {
+  const fontPath = path.join(__dirname, 'Inter-Regular.ttf');
+  if (fs.existsSync(fontPath)) {
+    GlobalFonts.registerFromPath(fontPath, 'Inter');
+    fontRegistered = true;
+    console.log('Font registered from:', fontPath);
+  } else {
+    console.log('Font file not found at:', fontPath);
+    // Try alternative paths for Vercel
+    const altPaths = [
+      path.join(process.cwd(), '10k-steps', 'Inter-Regular.ttf'),
+      path.join(process.cwd(), 'Inter-Regular.ttf'),
+      './Inter-Regular.ttf',
+    ];
+    for (const p of altPaths) {
+      if (fs.existsSync(p)) {
+        GlobalFonts.registerFromPath(p, 'Inter');
+        fontRegistered = true;
+        console.log('Font registered from alt path:', p);
+        break;
+      }
+    }
+  }
+} catch (e) {
+  console.error('Font registration error:', e.message);
+}
+
+// Use 'Inter' if registered, otherwise fallback to sans-serif
+const FONT_FAMILY = fontRegistered ? 'Inter' : 'sans-serif';
 
 // Color constants
 const COLORS = {
@@ -111,7 +140,7 @@ function generateWallpaper({ width, height, data, goal = 10000 }) {
       ctx.fillStyle = COLORS.TODAY_TEXT;
       const dayNum = dayIndex + 1;
       const fontSize = dayNum >= 100 ? circleRadius * 1.7 : circleRadius * 1.9;
-      ctx.font = `bold ${fontSize}px Inter`;
+      ctx.font = `bold ${fontSize}px ${FONT_FAMILY}`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(dayNum.toString(), x, y);
@@ -134,7 +163,7 @@ function generateWallpaper({ width, height, data, goal = 10000 }) {
   // Draw stats at bottom center
   const statsY = height * 0.92;
   const statsFontSize = width * 0.028;
-  ctx.font = `${statsFontSize}px Inter`;
+  ctx.font = `${statsFontSize}px ${FONT_FAMILY}`;
   ctx.textBaseline = 'middle';
   
   const daysText = `${daysLeft}d left`;
