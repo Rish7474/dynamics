@@ -142,9 +142,8 @@ function generateWallpaper({ width, height, data, goal = 10000 }) {
   const totalWidth = daysWidth + sepWidth + percentWidth;
   
   let xPos = (width - totalWidth) / 2;
-  
-  ctx.fillStyle = COLORS.SUCCESS;
   ctx.textAlign = 'left';
+  ctx.fillStyle = COLORS.SUCCESS;
   ctx.fillText(daysText, xPos, statsY);
   xPos += daysWidth;
   ctx.fillText(separator, xPos, statsY);
