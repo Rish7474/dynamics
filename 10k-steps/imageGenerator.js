@@ -1,18 +1,9 @@
 const { createCanvas, GlobalFonts } = require('@napi-rs/canvas');
 const path = require('path');
 
-// Try to load system fonts for serverless environments
-try {
-  // Register a basic font from the system or use fallback
-  const fontDir = '/usr/share/fonts';
-  const fs = require('fs');
-  if (fs.existsSync(fontDir)) {
-    GlobalFonts.loadFontsFromDir(fontDir);
-  }
-} catch (e) {
-  // Fonts may not be available, text rendering might fail
-  console.log('Font loading skipped:', e.message);
-}
+// Register bundled Inter font for serverless environments
+const fontPath = path.join(__dirname, 'Inter-Regular.ttf');
+GlobalFonts.registerFromPath(fontPath, 'Inter');
 
 // Color constants
 const COLORS = {
@@ -120,7 +111,7 @@ function generateWallpaper({ width, height, data, goal = 10000 }) {
       ctx.fillStyle = COLORS.TODAY_TEXT;
       const dayNum = dayIndex + 1;
       const fontSize = dayNum >= 100 ? circleRadius * 1.7 : circleRadius * 1.9;
-      ctx.font = `bold ${fontSize}px sans-serif`;
+      ctx.font = `bold ${fontSize}px Inter`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(dayNum.toString(), x, y);
@@ -143,7 +134,7 @@ function generateWallpaper({ width, height, data, goal = 10000 }) {
   // Draw stats at bottom center
   const statsY = height * 0.92;
   const statsFontSize = width * 0.028;
-  ctx.font = `${statsFontSize}px sans-serif`;
+  ctx.font = `${statsFontSize}px Inter`;
   ctx.textBaseline = 'middle';
   
   const daysText = `${daysLeft}d left`;
