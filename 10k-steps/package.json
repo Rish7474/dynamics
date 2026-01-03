@@ -1,0 +1,27 @@
+{
+  "name": "10k-steps-wallpaper",
+  "version": "2.0.0",
+  "description": "Dynamic iPhone lock screen wallpaper generator - spiral visualization of yearly step count",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "wallpaper",
+    "steps",
+    "health",
+    "ios",
+    "shortcut",
+    "fitness"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.65",
+    "express": "^4.18.2"
+  }
+}
